@@ -1,17 +1,17 @@
 <template>
 
-    <div class="relative">
+    <div class="relative" @mouseover="() => hovering = true" @mouseleave="() => hovering = false">
 
         <!-- Carousel content -->
         <div ref="carouselContainer" class="flex no-scrollbar overflow-x-scroll">
             <slot v-bind="$attrs"/>
         </div>
 
-        <!-- Carousel actions -->
+        <!-- Navigation actions -->
         <div
             class="absolute-center flex items-center w-full justify-between px-2">
-            <previous-button @click="onMovePrev"/>
-            <next-button @click="onMoveNext"/>
+            <previous-button :class="{'opacity-0': !hovering || !canMovePrev}" @click="onMovePrev"/>
+            <next-button :class="{'opacity-0': !hovering || !canMoveNext}" @click="onMoveNext"/>
         </div>
 
     </div>
@@ -36,6 +36,7 @@ const recalculatingDistance = ref<boolean>(true);
 const moveDistance = ref<number>();
 const autoPlayIntervalId = ref<number>(0);
 const autoPlayInterval = ref<number>();
+const hovering = ref<boolean>(false);
 
 const props = defineProps({
     onSourceChanged: {
@@ -60,16 +61,22 @@ const props = defineProps({
 });
 
 onMounted(() => {
-    props.onSourceChanged.callBack = recalculateItemDistance;
+    documentService.addEventListener(carouselContainer.value, "scroll", computeCanMove);
+    props.onSourceChanged.callBack = () => {
+        computeItemDistance();
+        computeCanMove();
+    };
+    computeCanMove();
     setAutoPlay();
 });
 
 onUnmounted(() => {
     removeAutoPlay();
+    documentService.removeEventListener(carouselContainer.value, "scroll", computeCanMove);
 });
 
 watch(() => props.autoPlay, () => {
-    console.log('autoplay changed', props.autoPlay);
+    computeCanMove();
 
     if (props.autoPlay) {
         setAutoPlay();
@@ -85,10 +92,10 @@ const setAutoPlay = () => {
     // Set autoplay interval
     if (props.autoPlay) {
         autoPlayInterval.value = props.autoPlayInterval > 0 ? props.autoPlayInterval : 2000;
-        autoPlayIntervalId.value = documentService.setInterval(() => onMoveNext(), autoPlayInterval.value);;
+        autoPlayIntervalId.value = documentService.setInterval(() => onMoveNext(), autoPlayInterval.value);
     }
 }
-gitgit
+
 /*
  * Removes autoplay interval
  */
@@ -99,14 +106,14 @@ const removeAutoPlay = () => {
 }
 
 const computeCanMove = () => {
-    canMovePrev.value = documentService.canScrollLeft(carouselContainer.value!);
-    canMoveNext.value = documentService.canScrollRight(carouselContainer.value!);
+    canMovePrev.value = props.loopToStart || documentService.canScrollLeft(carouselContainer.value!);
+    canMoveNext.value = props.loopToStart || documentService.canScrollRight(carouselContainer.value!);
 };
 
 /*
  * Recalculates distance to scroll when items changed
  */
-const recalculateItemDistance = () => {
+const computeItemDistance = () => {
     if (!carouselContainer.value) return;
 
     recalculatingDistance.value = true;

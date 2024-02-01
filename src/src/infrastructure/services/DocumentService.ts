@@ -26,8 +26,6 @@ export class DocumentService {
         const fullScroll = remainingScrollOnRight < distance * 2;
         const scrollDistance = fullScroll ? element.scrollWidth - element.clientWidth : element.scrollLeft + distance;
 
-        console.log('scroll distance', scrollDistance);
-
         element.scroll({
             left: scrollDistance,
             behavior: "smooth"

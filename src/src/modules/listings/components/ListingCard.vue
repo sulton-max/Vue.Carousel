@@ -80,28 +80,4 @@ const props = defineProps({
 
 const carouselAutoPlay = ref<boolean>(false);
 
-// const images = ref<Array<string>>([]);
-//
-// const test = [
-//     new URL('./assets/images/img_4.png', import.meta.url).href,
-//     new URL('./assets/images/img_5.png', import.meta.url).href,
-//     new URL('./assets/images/img_6.png', import.meta.url).href,
-//     new URL('./assets/images/img_7.png', import.meta.url).href,
-// ];
-//
-// const testB = ref<boolean>(false);
-//
-// onMounted(() => {
-//     setInterval(() => {
-//         if(testB.value) {
-//             images.value = props.listing.images;
-//             testB.value = !testB.value;
-//         } else {
-//             images.value = test;
-//             testB.value = !testB.value;
-//         }
-//         console.log('updating images');
-//     }, 2000);
-// });
-
 </script>
