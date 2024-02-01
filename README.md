@@ -23,14 +23,10 @@ that users can navigate. Essential features for a carousel include:
 
 TODO : Carousel in action gif
 
-***
-
 ## How it works
 
 Basically carousel is container for elements that overflows the container and with scrolling to the right distance we
 can imitate carousel effect
-
-*** 
 
 ## Running this demo
 
@@ -50,8 +46,6 @@ npm install
 ```sh
 npm run dev
 ```
-
-***
 
 ## How it is created ?
 
@@ -338,8 +332,6 @@ const removeAutoPlay = () => {
     }
 }
 ```
-
-***
 
 ### License
 
