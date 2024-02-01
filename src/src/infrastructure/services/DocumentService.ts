@@ -77,4 +77,22 @@ export class DocumentService {
     }
 
     /* endregion */
+
+    /* region Timeouts */
+
+    /*
+    * Sets an interval which executes a callback every given interval period
+     */
+    public setInterval(callback: () => void, timeout: number): number {
+        return setInterval(callback, timeout);
+    }
+
+    /*
+     * Clears an interval
+     */
+    public clearInterval(intervalId: number): void {
+        clearInterval(intervalId);
+    }
+
+    /* endregion */
 }

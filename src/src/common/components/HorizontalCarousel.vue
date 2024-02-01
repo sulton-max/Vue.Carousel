@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 
-import {onMounted, type PropType, ref} from "vue";
+import {onMounted, onUnmounted, ref, watch} from "vue";
 import {DocumentService} from "@/infrastructure/services/DocumentService";
 import type {Action} from "@/infrastructure/models/Callback";
 import PreviousButton from "@/common/components/PreviousButton.vue";
@@ -34,11 +34,18 @@ const canMoveNext = ref<boolean>(true);
 
 const recalculatingDistance = ref<boolean>(true);
 const moveDistance = ref<number>();
+const autoPlayIntervalId = ref<number>(0);
+const autoPlayInterval = ref<number>();
 
 const props = defineProps({
     onSourceChanged: {
         type: Object as () => Action,
         required: false
+    },
+    loopToStart: {
+        type: Boolean,
+        required: false,
+        default: false
     },
     autoPlay: {
         type: Boolean,
@@ -49,17 +56,47 @@ const props = defineProps({
         type: Number,
         required: false,
         default: 2000
-    },
-    loopToStart: {
-        type: Boolean,
-        required: false,
-        default: false
     }
 });
 
 onMounted(() => {
     props.onSourceChanged.callBack = recalculateItemDistance;
+    setAutoPlay();
 });
+
+onUnmounted(() => {
+    removeAutoPlay();
+});
+
+watch(() => props.autoPlay, () => {
+    console.log('autoplay changed', props.autoPlay);
+
+    if (props.autoPlay) {
+        setAutoPlay();
+    } else {
+        removeAutoPlay();
+    }
+});
+
+/*
+ * Sets autoplay interval
+ */
+const setAutoPlay = () => {
+    // Set autoplay interval
+    if (props.autoPlay) {
+        autoPlayInterval.value = props.autoPlayInterval > 0 ? props.autoPlayInterval : 2000;
+        autoPlayIntervalId.value = documentService.setInterval(() => onMoveNext(), autoPlayInterval.value);;
+    }
+}
+gitgit
+/*
+ * Removes autoplay interval
+ */
+const removeAutoPlay = () => {
+    if (autoPlayIntervalId.value > 0) {
+        documentService.clearInterval(autoPlayIntervalId.value);
+    }
+}
 
 const computeCanMove = () => {
     canMovePrev.value = documentService.canScrollLeft(carouselContainer.value!);

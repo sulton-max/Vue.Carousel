@@ -9,12 +9,15 @@
 
             <horizontal-carousel
                 :on-source-changed="sourceChangedNotificationSource"
+                @mouseover="() => carouselAutoPlay = true"
+                @mouseleave="() => carouselAutoPlay = false"
+                :auto-play="carouselAutoPlay"
                 :loop-to-start="true">
-                <img ref="imageElements" v-for="(image, index) in listing.images" :key="index"
+                <img v-for="(image, index) in listing.images" :key="index"
                      class="object-cover aspect-square"
                      loading="eager"
                      alt="Listing image"
-                     @load="onSourceChanged"
+                     @load="() => sourceChangedNotificationSource.callBack()"
                      :src="image">
             </horizontal-carousel>
 
@@ -75,9 +78,7 @@ const props = defineProps({
     }
 });
 
-const onSourceChanged = () => {
-    sourceChangedNotificationSource.value.callBack();
-};
+const carouselAutoPlay = ref<boolean>(false);
 
 // const images = ref<Array<string>>([]);
 //
